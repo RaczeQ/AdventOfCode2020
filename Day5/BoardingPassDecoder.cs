@@ -18,7 +18,6 @@ namespace Day5
         }
         public static (int row, int column) DecodePass(string pass)
         {
-            // Console.WriteLine(pass);
             int lowerRow = 0;
             int upperRow = 127;
             int lowerColumn = 0;
@@ -35,10 +34,8 @@ namespace Day5
                 {
                     lowerRow = mid + 1;
                 }
-                // Console.WriteLine($"{lowerRow}, {mid}, {upperRow}");
             }
             int row = upperRow;
-            // Console.WriteLine($"{row}");
 
             for (int c = 7; c < 10; c++)
             {
@@ -51,10 +48,8 @@ namespace Day5
                 {
                     lowerColumn = mid + 1;
                 }
-                // Console.WriteLine($"{lowerColumn}, {mid}, {upperColumn}");
             }
             int column = upperColumn;
-            // Console.WriteLine($"{column}");
 
             return (row, column);
         }
