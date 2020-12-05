@@ -11,7 +11,8 @@ namespace SolverExecutor
             new Day2.Registerer().RegisterActions(ref menu);
             new Day3.Registerer().RegisterActions(ref menu);
             new Day4.Registerer().RegisterActions(ref menu);
-            
+            new Day5.Registerer().RegisterActions(ref menu);
+
             menu.ShowMenu();
         }
     }

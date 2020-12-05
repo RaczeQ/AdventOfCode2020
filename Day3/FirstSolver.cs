@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ElvenTools;
+using ElvenTools.Utils;
 
 namespace Day3
 {
@@ -11,7 +12,7 @@ namespace Day3
         public long Calculate(List<string> input)
         {
             var plane = new TobogganPlane(input);
-            return RangeExtension
+            return LinqExtension
                 .TobogganRange(3, 1, input.Count)
                 .Count((t) => plane.IsTree(t.x, t.y));
         }

@@ -10,6 +10,7 @@
     <ProjectReference Include="..\Day2\Day2.csproj" />
     <ProjectReference Include="..\Day3\Day3.csproj" />
     <ProjectReference Include="..\Day4\Day4.csproj" />
+    <ProjectReference Include="..\Day5\Day5.csproj" />
     <ProjectReference Include="..\ElvenTools\ElvenTools.csproj" />
   </ItemGroup>
 

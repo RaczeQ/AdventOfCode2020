@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using ElvenTools;
+using ElvenTools.Utils;
 
 namespace Day3
 {
@@ -22,7 +23,7 @@ namespace Day3
             };
             
             return slopes
-                .Select(s => RangeExtension
+                .Select(s => LinqExtension
                     .TobogganRange(s.x, s.y, input.Count)
                     .Count((t) => plane.IsTree(t.x, t.y)))
                 .Select(Convert.ToInt64)
