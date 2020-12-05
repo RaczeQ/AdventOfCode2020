@@ -8,6 +8,6 @@ namespace ElvenTools
 {
     public interface IBaseSolver
     {
-        int Calculate(List<string> input);
+        long Calculate(List<string> input);
     }
 }

@@ -7,7 +7,7 @@ namespace Day1
     // Find the two entries that sum to 2020; what do you get if you multiply them together?
     public class FirstSolver : IBaseSolver
     {
-        public int Calculate(List<string> input)
+        public long Calculate(List<string> input)
         {
             var numbers = input.Select(int.Parse).ToList();
             return numbers

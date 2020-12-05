@@ -7,7 +7,7 @@ namespace Day1
     // In your expense report, what is the product of the three entries that sum to 2020?
     public class SecondSolver : IBaseSolver
     {
-        public int Calculate(List<string> input)
+        public long Calculate(List<string> input)
         {
             var numbers = input.Select(int.Parse).ToList();
             return numbers

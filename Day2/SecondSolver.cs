@@ -8,7 +8,7 @@ namespace Day2
     // How many passwords are valid according to the new interpretation of the policies?
     public class SecondSolver : IBaseSolver
     {
-        public int Calculate(List<string> input)
+        public long Calculate(List<string> input)
         {
             var passwords = input.Select(l => new Password(l)).ToList();
             return passwords

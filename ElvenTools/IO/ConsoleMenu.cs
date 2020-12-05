@@ -8,7 +8,7 @@ namespace ElvenTools.IO
 {
     public class ConsoleMenu
     {
-        public delegate int Calculate(List<string> input);
+        public delegate long Calculate(List<string> input);
 
         private readonly int _day;
         private readonly string _name;
