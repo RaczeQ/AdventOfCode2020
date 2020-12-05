@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ElvenTools
 {
-    public interface IBaseSolver
+    public interface ISolver
     {
         long Calculate(List<string> input);
     }

@@ -5,7 +5,7 @@ using ElvenTools;
 namespace Day1
 {
     // Find the two entries that sum to 2020; what do you get if you multiply them together?
-    public class FirstSolver : IBaseSolver
+    public class FirstSolver : ISolver
     {
         public long Calculate(List<string> input)
         {

@@ -7,7 +7,7 @@ using ElvenTools;
 namespace Day3
 {
     // What do you get if you multiply together the number of trees encountered on each of the listed slopes?
-    public class SecondSolver : IBaseSolver
+    public class SecondSolver : ISolver
     {
         public long Calculate(List<string> input)
         {

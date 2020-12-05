@@ -10,46 +10,69 @@ namespace ElvenTools.IO
     {
         public delegate long Calculate(List<string> input);
 
-        private readonly int _day;
-        private readonly string _name;
-        private readonly IDictionary<string, Calculate> _actions;
+        private readonly IDictionary<int, string> _days;
+        private readonly IDictionary<int, IDictionary<string, Calculate>> _actions;
+        private int? _selectedDayIndex;
         private int? _selectedActionIndex;
         private List<string> _selectedActionInput;
 
-        private string SelectedActionName => _selectedActionIndex.HasValue
-            ? _actions.ElementAt(_selectedActionIndex.Value).Key
+        private int? SelectedDayNumber => _selectedDayIndex.HasValue ? _days.ElementAt(_selectedDayIndex.Value).Key : null;
+        private string SelectedDayName => _selectedDayIndex.HasValue ? _days.ElementAt(_selectedDayIndex.Value).Value : null;
+        private IDictionary<string, Calculate> SelectedDayActions => _selectedDayIndex.HasValue ? _actions.ElementAt(_selectedDayIndex.Value).Value : null;
+
+        private string SelectedActionName => _selectedDayIndex.HasValue && _selectedActionIndex.HasValue
+            ? SelectedDayActions.ElementAt(_selectedActionIndex.Value).Key
             : null;
 
-        private Calculate SelectedActionDelegate => _selectedActionIndex.HasValue
-            ? _actions.ElementAt(_selectedActionIndex.Value).Value
+        private Calculate SelectedActionDelegate => _selectedDayIndex.HasValue && _selectedActionIndex.HasValue
+            ? SelectedDayActions.ElementAt(_selectedActionIndex.Value).Value
             : null;
 
-        public ConsoleMenu(int day, string name)
+        public ConsoleMenu()
         {
-            _day = day;
-            _name = name;
-            _actions = new Dictionary<string, Calculate>();
+            _actions = new Dictionary<int, IDictionary<string, Calculate>>();
+            _days = new Dictionary<int, string>();
         }
 
-        public void RegisterAction(string name, Calculate delegateMethod)
+        public void RegisterDay(int day, string name)
         {
-            _actions.Add(name, delegateMethod);
+            _days.Add(day, name);
+            _actions.Add(day, new Dictionary<string, Calculate>());
+        }
+
+        public void RegisterAction(int day, string name, Calculate delegateMethod)
+        {
+            _actions[day].Add(name, delegateMethod);
         }
 
         public void ShowMenu()
         {
-            select_action:
-            _selectedActionIndex = ShowActions();
-            if (_selectedActionIndex == null)
+            select_day:
+            _selectedDayIndex = null;
+            _selectedDayIndex = ShowDays();
+            if (_selectedDayIndex == null)
             {
                 goto close_menu;
             }
+            
+            select_action:
+            _selectedActionIndex = null;
+            _selectedActionIndex = ShowActions();
+            if (_selectedActionIndex == null)
+            {
+                goto select_day;
+            }
 
             read_input:
-            _selectedActionInput = GetActionInput();
-            if (_selectedActionInput == null)
+            _selectedActionInput = null;
+            var actionMenuResult = GetActionInput();
+            switch (actionMenuResult)
             {
-                goto select_action;
+                case null:
+                case 2:
+                    goto select_action;
+                case 3:
+                    goto select_day;
             }
 
             execute_action:
@@ -61,8 +84,9 @@ namespace ElvenTools.IO
                 case 2:
                     goto select_action;
                 case 3:
+                    goto select_day;
+                case 4:
                     goto close_menu;
-                case 1:
                 default:
                     goto read_input;
             }
@@ -80,10 +104,14 @@ namespace ElvenTools.IO
             do
             {
                 Console.Clear();
-                Console.Write($"Day {_day} - {_name} ");
-                if (_selectedActionIndex.HasValue)
+                Console.Write($"AoC 2020 ");
+                if (_selectedDayIndex.HasValue)
                 {
-                    Console.Write($"({SelectedActionName})");
+                    Console.Write($"- Day {SelectedDayNumber} - {SelectedDayName} ");
+                    if (_selectedActionIndex.HasValue)
+                    {
+                        Console.Write($"({SelectedActionName})");
+                    }
                 }
 
                 Console.WriteLine($"\n{title}\n");
@@ -122,9 +150,19 @@ namespace ElvenTools.IO
             return result;
         }
 
+        private int? ShowDays()
+        {
+            int? selectedDay = ShowMenuList("Select day", _days.Select(kv => $"[{kv.Key}] {kv.Value}").ToList());
+            return selectedDay;
+        }
+
         private int? ShowActions()
         {
-            int? selectedAction = ShowMenuList("Select action", _actions.Keys.ToList());
+            int? selectedAction = null;
+            if (_selectedDayIndex != null)
+            {
+                selectedAction = ShowMenuList("Select action", _actions.ElementAt(_selectedDayIndex.Value).Value.Keys.ToList());
+            }
             return selectedAction;
         }
 
@@ -189,10 +227,10 @@ namespace ElvenTools.IO
             return lines;
         }
 
-        private List<string> GetActionInput()
+        private int? GetActionInput()
         {
             List<string> input = null;
-            var actions = new List<string> {"Paste input into console", "Load input from txt file", "Change action"};
+            var actions = new List<string> {"Paste input into console", "Load input from txt file", "Change action", "Change day"};
             int? selectedAction = ShowMenuList($"Select data input method", actions);
             switch (selectedAction)
             {
@@ -204,7 +242,8 @@ namespace ElvenTools.IO
                     break;
             }
 
-            return input;
+            _selectedActionInput = input;
+            return selectedAction;
         }
 
         private int? ExecuteAction()
@@ -226,7 +265,7 @@ namespace ElvenTools.IO
             }
 
             var actions = new List<string>
-                {"Execute action again", "Change action input", "Go to action select menu", "Close menu"};
+                {"Execute action again", "Change action input", "Go to action select menu", "Go to day select menu", "Close menu"};
             int? selectedAction = ShowMenuList(resultDesc, actions);
 
             return selectedAction;

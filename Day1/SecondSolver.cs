@@ -5,7 +5,7 @@ using ElvenTools;
 namespace Day1
 {
     // In your expense report, what is the product of the three entries that sum to 2020?
-    public class SecondSolver : IBaseSolver
+    public class SecondSolver : ISolver
     {
         public long Calculate(List<string> input)
         {

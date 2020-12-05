@@ -6,7 +6,7 @@ using ElvenTools;
 namespace Day2
 {
     // How many passwords are valid according to the new interpretation of the policies?
-    public class SecondSolver : IBaseSolver
+    public class SecondSolver : ISolver
     {
         public long Calculate(List<string> input)
         {

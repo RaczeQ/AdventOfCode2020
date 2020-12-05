@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Day1\Day1.csproj" />
+    <ProjectReference Include="..\Day2\Day2.csproj" />
+    <ProjectReference Include="..\Day3\Day3.csproj" />
+    <ProjectReference Include="..\Day4\Day4.csproj" />
+    <ProjectReference Include="..\ElvenTools\ElvenTools.csproj" />
+  </ItemGroup>
+
+</Project>

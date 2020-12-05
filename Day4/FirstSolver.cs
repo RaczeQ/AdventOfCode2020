@@ -6,7 +6,7 @@ using ElvenTools;
 namespace Day4
 {
     // Count the number of valid passports - those that have all required fields. Treat cid as optional. In your batch file, how many passports are valid?
-    public class FirstSolver : IBaseSolver
+    public class FirstSolver : ISolver
     {
         public long Calculate(List<string> input)
         {
