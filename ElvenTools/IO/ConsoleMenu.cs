@@ -132,11 +132,28 @@ namespace ElvenTools.IO
         {
             List<string> lines = new List<string>();
             Console.Clear();
-            Console.WriteLine("Provide input:");
-            string line;
-            while (!string.IsNullOrEmpty(line = Console.ReadLine()))
+            Console.WriteLine("Provide input (Submit with END key):");
+            StringBuilder sb = new StringBuilder();
+            ConsoleKeyInfo pressedKey;
+            while ((pressedKey = Console.ReadKey(true)).Key != ConsoleKey.End)
             {
-                lines.Add(line);
+                if (pressedKey.Key == ConsoleKey.Enter)
+                {
+                    lines.Add(sb.ToString());
+                    sb.Clear();
+                    Console.WriteLine();
+                }
+                else
+                {
+                    sb.Append(pressedKey.KeyChar);
+                    Console.Write(pressedKey.KeyChar);
+                }
+            }
+
+            if (sb.Length > 0)
+            {
+                lines.Add(sb.ToString());
+                sb.Clear();
             }
 
             return lines;
