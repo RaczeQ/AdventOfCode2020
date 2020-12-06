@@ -8,6 +8,9 @@ namespace ElvenTools.Utils
 {
     public static class LinqExtension
     {
+        public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)
+            => self.Select((item, index) => (item, index));
+        
         public static IEnumerable<(int x, int y)> TobogganRange(int xSlope, int ySlope, int count)
         {
             for (int n = 1; n * ySlope < count; n += 1)

@@ -3,11 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using ElvenTools.Utils;
 
 namespace ElvenTools.IO
 {
     public class ConsoleMenu
     {
+        private static List<ConsoleColor> _borderColors = new List<ConsoleColor>
+        {
+            ConsoleColor.Red,
+            // ConsoleColor.White,
+            ConsoleColor.Green,
+            // ConsoleColor.White
+        };
         private static List<string> _footerMenuValues = new List<string>
         {
             "Use ↑↓ to navigate actions.",
@@ -110,6 +118,25 @@ namespace ElvenTools.IO
             Console.ReadLine();
         }
 
+        private void PrintBorder(int totalRows)
+        {
+            int width = Console.WindowWidth;
+
+            var topRow = Enumerable.Range(0, width).Select(x => (x: x, y: 0));
+            var rightColumn = Enumerable.Range(1, totalRows - 2).Select(y => (x: width - 1, y: y));
+            var bottomRow = Enumerable.Range(0, width).Select(x => (x: width - x - 1, y: totalRows - 1));
+            var leftColumn = Enumerable.Range(1, totalRows - 2).Select(y => (x: 0, y: totalRows - y - 1));
+            var allPositions = topRow.Concat(rightColumn).Concat(bottomRow).Concat(leftColumn).ToList();
+            foreach (var (position, n) in allPositions.WithIndex())
+            {
+                Console.BackgroundColor = _borderColors[n % _borderColors.Count];
+                Console.SetCursorPosition(position.x, position.y);
+                Console.Write(" ");
+            }
+
+            Console.BackgroundColor = ConsoleColor.White;
+        }
+
         private void WriteMenuToConsole(List<string> headerLines, string title, List<string> optionsLines, List<string> footerLines, int? index)
         {
             Console.Clear();
@@ -130,21 +157,38 @@ namespace ElvenTools.IO
             Console.SetCursorPosition((Console.WindowWidth - title.Length) / 2, rowPosition);
             Console.WriteLine(title);
             Console.WriteLine();
+
+            rowPosition += 2;
             foreach (var (actionName, n) in optionsLines.WithIndex())
             {
                 if (n == index)
                 {
-                    Console.Write("- ");
+                    Console.BackgroundColor = n % 2 == 0 ? ConsoleColor.Red : ConsoleColor.Green;
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.SetCursorPosition(2, rowPosition);
+                    Console.Write(" ");
+                    // Console.BackgroundColor = n % 2 == 0 ? ConsoleColor.DarkRed : ConsoleColor.DarkGreen;
                 }
-            
-                Console.WriteLine(actionName);
-            }
 
-            Console.WriteLine();
+                Console.SetCursorPosition(4, rowPosition++);
+                Console.Write(actionName);
+
+                Console.BackgroundColor = ConsoleColor.White;
+                Console.ForegroundColor = ConsoleColor.Black;
+            }
+            
+            Console.SetCursorPosition(2, ++rowPosition);
+            Console.Write(string.Empty.PadRight(Console.WindowWidth - 4, '-'));
+            rowPosition++;
             foreach (var footer in footerLines)
             {
+                Console.SetCursorPosition(4, ++rowPosition);
                 Console.WriteLine(footer);
             }
+
+            rowPosition += 3;
+
+            PrintBorder(rowPosition);
         }
 
         private int? ShowMenuList(string title, List<string> options)
@@ -165,37 +209,6 @@ namespace ElvenTools.IO
 
                     headerLines.Add(tempStr);
                 }
-                // headerLines.Add(title);
-                
-                
-                // Console.Clear();
-                // Console.CursorVisible = false;
-                // Console.Write($"AoC 2020 ");
-                // if (_selectedDayIndex.HasValue)
-                // {
-                //     Console.Write($"- Day {SelectedDayNumber} - {SelectedDayName} ");
-                //     if (_selectedActionIndex.HasValue)
-                //     {
-                //         Console.Write($"({SelectedActionName})");
-                //     }
-                // }
-                //
-                // Console.WriteLine($"\n{title}\n");
-
-                // foreach (var (actionName, index) in options.WithIndex())
-                // {
-                //     if (result == index)
-                //     {
-                //         Console.Write("- ");
-                //     }
-                //
-                //     Console.WriteLine($"{actionName}");
-                // }
-                //
-                // // Console.WriteLine($"\n-------------------------------------\n");
-                // Console.WriteLine("Use ↑↓ to navigate actions.");
-                // Console.WriteLine("Press ENTER to select action.");
-                // Console.WriteLine("Press ESCAPE to go to previous menu.");
 
                 WriteMenuToConsole(headerLines, title, options, _footerMenuValues, result);
 
@@ -220,7 +233,7 @@ namespace ElvenTools.IO
 
         private int? ShowDays()
         {
-            int? selectedDay = ShowMenuList("Select day", _days.Select(kv => $"[{kv.Key}] {kv.Value}").ToList());
+            int? selectedDay = ShowMenuList("Select day", _days.Select(kv => $"Day {kv.Key} - {kv.Value}").ToList());
             return selectedDay;
         }
 
