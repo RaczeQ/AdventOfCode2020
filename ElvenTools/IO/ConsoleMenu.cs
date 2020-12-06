@@ -8,6 +8,12 @@ namespace ElvenTools.IO
 {
     public class ConsoleMenu
     {
+        private static List<string> _footerMenuValues = new List<string>
+        {
+            "Use ↑↓ to navigate actions.",
+            "Press ENTER to select action.",
+            "Press ESCAPE to go to previous menu."
+        };
         public delegate long Calculate(List<string> input);
 
         private readonly IDictionary<int, string> _days;
@@ -16,9 +22,14 @@ namespace ElvenTools.IO
         private int? _selectedActionIndex;
         private List<string> _selectedActionInput;
 
-        private int? SelectedDayNumber => _selectedDayIndex.HasValue ? _days.ElementAt(_selectedDayIndex.Value).Key : null;
-        private string SelectedDayName => _selectedDayIndex.HasValue ? _days.ElementAt(_selectedDayIndex.Value).Value : null;
-        private IDictionary<string, Calculate> SelectedDayActions => _selectedDayIndex.HasValue ? _actions.ElementAt(_selectedDayIndex.Value).Value : null;
+        private int? SelectedDayNumber =>
+            _selectedDayIndex.HasValue ? _days.ElementAt(_selectedDayIndex.Value).Key : null;
+
+        private string SelectedDayName =>
+            _selectedDayIndex.HasValue ? _days.ElementAt(_selectedDayIndex.Value).Value : null;
+
+        private IDictionary<string, Calculate> SelectedDayActions =>
+            _selectedDayIndex.HasValue ? _actions.ElementAt(_selectedDayIndex.Value).Value : null;
 
         private string SelectedActionName => _selectedDayIndex.HasValue && _selectedActionIndex.HasValue
             ? SelectedDayActions.ElementAt(_selectedActionIndex.Value).Key
@@ -47,6 +58,8 @@ namespace ElvenTools.IO
 
         public void ShowMenu()
         {
+            Console.BackgroundColor = ConsoleColor.White;
+            Console.ForegroundColor = ConsoleColor.Black;
             select_day:
             _selectedDayIndex = null;
             _selectedDayIndex = ShowDays();
@@ -54,7 +67,7 @@ namespace ElvenTools.IO
             {
                 goto close_menu;
             }
-            
+
             select_action:
             _selectedActionIndex = null;
             _selectedActionIndex = ShowActions();
@@ -97,39 +110,94 @@ namespace ElvenTools.IO
             Console.ReadLine();
         }
 
+        private void WriteMenuToConsole(List<string> headerLines, string title, List<string> optionsLines, List<string> footerLines, int? index)
+        {
+            Console.Clear();
+            Console.CursorVisible = false;
+            var allLines = headerLines.Concat(optionsLines).Concat(footerLines).ToList();
+            int maxWidth = allLines.Select(l => l.Length).Max();
+            int height = allLines.Count();
+
+            int rowPosition = 2;
+            
+            foreach (var (headerLine, n) in headerLines.WithIndex())
+            {
+                Console.SetCursorPosition((Console.WindowWidth - headerLine.Length) / 2, ++rowPosition);
+                Console.WriteLine(headerLine);
+            }
+
+            rowPosition += 2;
+            Console.SetCursorPosition((Console.WindowWidth - title.Length) / 2, rowPosition);
+            Console.WriteLine(title);
+            Console.WriteLine();
+            foreach (var (actionName, n) in optionsLines.WithIndex())
+            {
+                if (n == index)
+                {
+                    Console.Write("- ");
+                }
+            
+                Console.WriteLine(actionName);
+            }
+
+            Console.WriteLine();
+            foreach (var footer in footerLines)
+            {
+                Console.WriteLine(footer);
+            }
+        }
+
         private int? ShowMenuList(string title, List<string> options)
         {
             int? result = 0;
             ConsoleKeyInfo pressedKey;
             do
             {
-                Console.Clear();
-                Console.Write($"AoC 2020 ");
+                var headerLines = new List<string>();
+                headerLines.Add("AoC 2020");
                 if (_selectedDayIndex.HasValue)
                 {
-                    Console.Write($"- Day {SelectedDayNumber} - {SelectedDayName} ");
+                    var tempStr = $"Day {SelectedDayNumber} - {SelectedDayName}";
                     if (_selectedActionIndex.HasValue)
                     {
-                        Console.Write($"({SelectedActionName})");
-                    }
-                }
-
-                Console.WriteLine($"\n{title}\n");
-
-                foreach (var (actionName, index) in options.WithIndex())
-                {
-                    if (result == index)
-                    {
-                        Console.Write("- ");
+                        tempStr += $" ({SelectedActionName})";
                     }
 
-                    Console.WriteLine($"{actionName}");
+                    headerLines.Add(tempStr);
                 }
+                // headerLines.Add(title);
+                
+                
+                // Console.Clear();
+                // Console.CursorVisible = false;
+                // Console.Write($"AoC 2020 ");
+                // if (_selectedDayIndex.HasValue)
+                // {
+                //     Console.Write($"- Day {SelectedDayNumber} - {SelectedDayName} ");
+                //     if (_selectedActionIndex.HasValue)
+                //     {
+                //         Console.Write($"({SelectedActionName})");
+                //     }
+                // }
+                //
+                // Console.WriteLine($"\n{title}\n");
 
-                Console.WriteLine($"\n-------------------------------------\n");
-                Console.WriteLine("Use ↑↓ to navigate actions.");
-                Console.WriteLine("Press ENTER to select action.");
-                Console.WriteLine("Press ESCAPE to go to previous menu.");
+                // foreach (var (actionName, index) in options.WithIndex())
+                // {
+                //     if (result == index)
+                //     {
+                //         Console.Write("- ");
+                //     }
+                //
+                //     Console.WriteLine($"{actionName}");
+                // }
+                //
+                // // Console.WriteLine($"\n-------------------------------------\n");
+                // Console.WriteLine("Use ↑↓ to navigate actions.");
+                // Console.WriteLine("Press ENTER to select action.");
+                // Console.WriteLine("Press ESCAPE to go to previous menu.");
+
+                WriteMenuToConsole(headerLines, title, options, _footerMenuValues, result);
 
                 pressedKey = Console.ReadKey(false);
                 if (pressedKey.Key == ConsoleKey.UpArrow)
@@ -161,8 +229,10 @@ namespace ElvenTools.IO
             int? selectedAction = null;
             if (_selectedDayIndex != null)
             {
-                selectedAction = ShowMenuList("Select action", _actions.ElementAt(_selectedDayIndex.Value).Value.Keys.ToList());
+                selectedAction = ShowMenuList("Select action",
+                    _actions.ElementAt(_selectedDayIndex.Value).Value.Keys.ToList());
             }
+
             return selectedAction;
         }
 
@@ -170,6 +240,7 @@ namespace ElvenTools.IO
         {
             List<string> lines = new List<string>();
             Console.Clear();
+            Console.CursorVisible = true;
             Console.WriteLine("Provide input (Submit with END key):");
             StringBuilder sb = new StringBuilder();
             ConsoleKeyInfo pressedKey;
@@ -202,6 +273,7 @@ namespace ElvenTools.IO
             List<string> lines = new List<string>();
 
             Console.Clear();
+            Console.CursorVisible = true;
             Console.Write("Provide file path: ");
             string filePath = Console.ReadLine();
             if (!string.IsNullOrEmpty(filePath))
@@ -230,7 +302,8 @@ namespace ElvenTools.IO
         private int? GetActionInput()
         {
             List<string> input = null;
-            var actions = new List<string> {"Paste input into console", "Load input from txt file", "Change action", "Change day"};
+            var actions = new List<string>
+                {"Paste input into console", "Load input from txt file", "Change action", "Change day"};
             int? selectedAction = ShowMenuList($"Select data input method", actions);
             switch (selectedAction)
             {
@@ -265,7 +338,10 @@ namespace ElvenTools.IO
             }
 
             var actions = new List<string>
-                {"Execute action again", "Change action input", "Go to action select menu", "Go to day select menu", "Close menu"};
+            {
+                "Execute action again", "Change action input", "Go to action select menu", "Go to day select menu",
+                "Close menu"
+            };
             int? selectedAction = ShowMenuList(resultDesc, actions);
 
             return selectedAction;
