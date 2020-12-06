@@ -1,4 +1,7 @@
-﻿using ElvenTools.IO;
+﻿using System;
+using System.Reflection;
+using ElvenTools;
+using ElvenTools.IO;
 
 namespace SolverExecutor
 {
@@ -7,12 +10,21 @@ namespace SolverExecutor
         static void Main(string[] args)
         {
             var menu = new ConsoleMenu();
-            new Day1.Registerer().RegisterActions(ref menu);
-            new Day2.Registerer().RegisterActions(ref menu);
-            new Day3.Registerer().RegisterActions(ref menu);
-            new Day4.Registerer().RegisterActions(ref menu);
-            new Day5.Registerer().RegisterActions(ref menu);
-
+            for (int i = 1; i < 25; i++)
+            {
+                var name = $"Day{i}";
+                try
+                {
+                    var dayAssembly = Assembly.Load(name);
+                    Type t = dayAssembly.GetType($"{name}.Registerer");
+                    var registerer = (ActionRegisterer)Activator.CreateInstance(t);
+                    registerer.RegisterActions(ref menu);
+                }
+                catch
+                {
+                    // pass
+                }
+            }
             menu.ShowMenu();
         }
     }
