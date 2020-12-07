@@ -5,12 +5,16 @@
 
 These are my [Advent of Code](https://adventofcode.com) (AoC) solutions for a year 2020.
 
-Project is interacted using a console menu (visible below).
+Solutions aren't written to be as efficient as possible, but I try to use mainly LINQ queries to calculate an answer.
+
+### Console
+
+Project is interacted using a console menu (visible below).  
+Console reads input data from either a text file or by pasting it directly into a console.
 
 ![](https://media.giphy.com/media/QVEsk25PfUvheWt0me/giphy.gif)
 
-Console reads input data from either a text file or by pasting it directly into a console.
-Solutions aren't written to be as efficient as possible, but I try to use mainly LINQ queries to calculate an answer.
+You can find it coded in [ElvenTools.IO.ConsoleMenu](ElvenTools/IO/ConsoleMenu.cs)
 
 ### LINQ Examples
 
