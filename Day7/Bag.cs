@@ -18,14 +18,14 @@ namespace Day7
         public Bag(string line)
         {
             Name = ColorMatcherRegex.Match(line).Value;
-            Content = BagsMatcherRegex.Matches(line).ToList()
+            Content = BagsMatcherRegex.Matches(line)
                 .ToDictionary(
                     m => m.Groups[2].Value,
                     m => int.Parse(m.Groups[1].Value)
                 );
         }
 
-        private Bag GetBag(string key, List<Bag> allBags)
+        public static Bag GetBag(string key, List<Bag> allBags)
         {
             return allBags.First(b => b.Name.Equals(key));
         }

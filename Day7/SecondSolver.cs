@@ -10,7 +10,7 @@ namespace Day7
         public long Calculate(List<string> input)
         {
             var bags = input.Select(l => new Bag(l)).ToList();
-            return bags.First(b => b.Name.Equals(Bag.ShinyGoldName)).CalculateBags(bags);
+            return Bag.GetBag(Bag.ShinyGoldName, bags).CalculateBags(bags);
         }
     }
 }
