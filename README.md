@@ -44,3 +44,18 @@ public long Calculate(List<string> input)
         .Sum();
 }
 ```
+
+**Day 9 - Part 1** (finding pair sum is copied Day 1 - Part 1)
+```C#
+public long Calculate(List<string> input)
+{
+    const int preambleSize = 25;
+    var numbers = input.Select(long.Parse).ToList();
+    return numbers
+        .Skip(preambleSize)
+        .Select((x, i) => (x, numbers.Skip(i).Take(preambleSize).ToList()))
+        .First(t => t.Item2
+            .SelectMany((x, i) => t.Item2.Skip(i + 1), (x, y) => (x, y))
+            .All(p => p.x + p.y != t.x)).x;
+}
+```
