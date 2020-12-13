@@ -59,3 +59,19 @@ public long Calculate(List<string> input)
             .All(p => p.x + p.y != t.x)).x;
 }
 ```
+
+**Day 13 - Part 1**
+```C#
+public long Calculate(List<string> input)
+{
+    var timestamp = long.Parse(input[0]);
+    return input[1]
+        .Split(',')
+        .Where(c => !c.Equals("x"))
+        .Select(long.Parse)
+        .Select(b => (b, Convert.ToInt64(b * Math.Ceiling((float) timestamp / (float) b) - timestamp)))
+        .OrderBy(t => t.Item2)
+        .Select(t => t.b * t.Item2)
+        .First();
+}
+```
