@@ -338,8 +338,10 @@ namespace ElvenTools.IO
             Console.Clear();
             try
             {
+                var watch = System.Diagnostics.Stopwatch.StartNew();
                 var result = SelectedActionDelegate(_selectedActionInput);
-                resultDesc = $"Result: {result}";
+                watch.Stop();
+                resultDesc = $"Result: {result} ({watch.ElapsedMilliseconds} ms)";
             }
             catch (Exception ex)
             {
