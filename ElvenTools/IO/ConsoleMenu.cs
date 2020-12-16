@@ -12,9 +12,7 @@ namespace ElvenTools.IO
         private static List<ConsoleColor> _borderColors = new List<ConsoleColor>
         {
             ConsoleColor.Red,
-            // ConsoleColor.White,
             ConsoleColor.Green,
-            // ConsoleColor.White
         };
         private static List<string> _footerMenuValues = new List<string>
         {
@@ -46,6 +44,8 @@ namespace ElvenTools.IO
         private Calculate SelectedActionDelegate => _selectedDayIndex.HasValue && _selectedActionIndex.HasValue
             ? SelectedDayActions.ElementAt(_selectedActionIndex.Value).Value
             : null;
+
+        private int _windowHeight = Console.WindowHeight;
 
         public ConsoleMenu()
         {
@@ -187,6 +187,12 @@ namespace ElvenTools.IO
             }
 
             rowPosition += 3;
+
+            if (rowPosition > _windowHeight)
+            {
+                Console.WindowHeight = rowPosition + 1;
+                _windowHeight = rowPosition + 1;
+            }
 
             PrintBorder(rowPosition);
         }
