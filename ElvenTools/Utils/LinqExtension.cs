@@ -10,7 +10,7 @@ namespace ElvenTools.Utils
     {
         public static IEnumerable<(T item, int index)> WithIndex<T>(this IEnumerable<T> self)
             => self.Select((item, index) => (item, index));
-        
+
         public static IEnumerable<(int x, int y)> TobogganRange(int xSlope, int ySlope, int count)
         {
             for (int n = 1; n * ySlope < count; n += 1)
@@ -31,6 +31,37 @@ namespace ElvenTools.Utils
                 while (it.MoveNext())
                     yield return Tuple.Create(previous, previous = it.Current);
             }
+        }
+
+        private static IEnumerable<List<int>> DimensionalNeighborsGenerator(int dimensions)
+        {
+            if (dimensions == 1)
+            {
+                foreach (int n in Enumerable.Range(-1, 3))
+                    yield return new List<int> {n};
+            }
+            else
+            {
+                foreach (var b in DimensionalNeighborsGenerator(dimensions - 1))
+                foreach (var a in Enumerable.Range(-1, 3))
+                {
+                    yield return b.Prepend(a).ToList();
+                }
+            }
+        }
+
+        public static IEnumerable<List<int>> DimensionalNeighbors(int dimensions)
+        {
+            return DimensionalNeighborsGenerator(dimensions).Where(x => x.Any(n => n != 0));
+        }
+
+        public static IEnumerable<List<int>> DimensionalNeighbors(IEnumerable<int> pos)
+        {
+            return DimensionalNeighbors(pos.Count())
+                .Select(x => x.Zip(pos)
+                    .Select(t => t.First + t.Second)
+                    .ToList()
+                ).ToList();
         }
     }
 }
